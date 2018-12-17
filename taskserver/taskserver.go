@@ -18,12 +18,14 @@ func (th *textHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 type indexHandler struct{}
 
 func (ih *indexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//r.ParseForm()
+
 	w.Header().Set("Content-Type", "text/html")
 
 	html := `<doctype html>
         <html>
         <head>
-          <title>Hello World</title>
+          <title>Task Server!</title>
         </head>
         <body>
         <p>

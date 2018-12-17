@@ -17,3 +17,13 @@ echo "go get -u -t gonum.org/v1/gonum/..."
 go get -u -t gonum.org/v1/gonum/...
 echo "go test gonum.org/v1/..."
 go test gonum.org/v1/...
+
+echo "Installing network supporting packges"
+echo "go get github.com/gomodule/redigo/redis"
+go get github.com/gomodule/redigo/redis
+echo "go get github.com/dustin/go-coap" 
+go get github.com/dustin/go-coap
+echo "go get github.com/jeffallen/mqtt"
+go get github.com/jeffallen/mqtt
+echo "go get github.com/huin/mqtt"
+go get github.com/huin/mqtt

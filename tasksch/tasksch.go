@@ -25,7 +25,7 @@ func (ih *indexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	html := `<doctype html>
         <html>
         <head>
-          <title>Hello World</title>
+          <title>Scheduler!</title>
         </head>
         <body>
         <p>
@@ -44,5 +44,5 @@ func main() {
 	thWelcome := &textHandler{"TextHandler !"}
 	mux.Handle("/text", thWelcome)
 
-	http.ListenAndServe(":8000", mux)
+	http.ListenAndServe(":8008", mux)
 }
