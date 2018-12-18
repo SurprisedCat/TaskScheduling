@@ -12,7 +12,7 @@ echo "sudo cpufreq-set -c 1 -g userspace"
 sudo cpufreq-set -c 1 -g userspace
 for CPUFREQ in 1200MHz 1300MHz 1400MHz 1500MHz 1600MHz 1700MHz 1800MHz 1900MHz 2000MHz 2100MHz
 do
-    sudo cpufreq-set -f $CPUFREQ
+    sudo cpufreq-set -c 1 -f $CPUFREQ
     for CPUS in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
     do
         docker update cputest --cpus=$CPUS
