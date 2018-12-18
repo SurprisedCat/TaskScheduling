@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/binary"
 	"fmt"
 	"os"
 )
@@ -56,4 +57,15 @@ func Min(x, y int) int {
 		return x
 	}
 	return y
+}
+
+//Uint32ToBytes
+func Uint32ToBytes(i uint32) []byte {
+	var buf = make([]byte, 4)
+	binary.BigEndian.PutUint32(buf, uint32(i))
+	return buf
+}
+
+func BytesToUint32(buf []byte) uint32 {
+	return uint32(binary.BigEndian.Uint32(buf))
 }

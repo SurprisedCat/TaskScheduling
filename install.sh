@@ -27,3 +27,5 @@ echo "go get github.com/jeffallen/mqtt"
 go get github.com/jeffallen/mqtt
 echo "go get github.com/huin/mqtt"
 go get github.com/huin/mqtt
+echo "go get github.com/gorilla/mux"
+go get github.com/gorilla/mux
