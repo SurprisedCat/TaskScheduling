@@ -1,16 +1,40 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"os"
+	"strconv"
 	"time"
 
 	"../matrix"
+	"../utils"
 	"gonum.org/v1/gonum/mat"
 )
 
+var help bool
+var dim int
+var iter int
+var cpuHz string
+var cpus string
+
+func init() {
+
+	flag.BoolVar(&help, "h", false, "Print help message")
+	flag.IntVar(&dim, "d", 100, "The dimension of the test matrix")
+	flag.IntVar(&iter, "i", 100, "The iteration number of the test")
+	flag.StringVar(&cpuHz, "z", "1000", "The frequency of CPU measured in MHz")
+	flag.StringVar(&cpus, "c", "0.5", "The cpu share of the container")
+
+}
 func main() {
-	iter := 100
-	dim := 100
+	flag.Parse()
+	if help {
+		flag.Usage()
+		return
+	}
+	iter := iter
+	dim := dim
 	// Initialize two matrices, a and b.
 
 	a := matrix.RandomMatrix(dim)
@@ -22,16 +46,18 @@ func main() {
 	for i := 0; i < iter; i++ {
 		c.Mul(a, b)
 	}
-	cost := time.Since(start).Nanoseconds() / 1000
-	fmt.Println(cost)
-	// Print the result using the formatter.
-	//fc := mat.Formatted(&c, mat.Prefix("    "), mat.Squeeze())
-	//fmt.Printf("c = %v\n", fc)
-	enc, _ := c.MarshalBinary()
-	fmt.Println(enc)
-	var dec mat.Dense
-	dec.UnmarshalBinary(enc)
-	// Print the result using the formatter.
-	fc := mat.Formatted(&dec, mat.Prefix("    "), mat.Squeeze())
-	fmt.Printf("dec = %v\n", fc)
+	cost := time.Since(start).Nanoseconds() / 1000 //MicroSeconds
+
+	//将结果以CVS格式写入文件
+	f, err := os.OpenFile("delayTest.csv", os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		utils.CheckErr(err, "delay.csv file create failed.")
+	}
+	content := []byte(cpus + "," + cpuHz + "," + strconv.Itoa(dim) + "," + strconv.Itoa(iter) + "," + strconv.FormatInt(cost, 10) + "\n")
+	_, err = f.Write(content)
+	if err != nil {
+		utils.CheckErr(err, "File write error.")
+	} else {
+		fmt.Println("write file successful")
+	}
 }
