@@ -24,5 +24,6 @@ do
 done
 echo "sudo cpufreq-set -c 1 -g ondemand"
 sudo cpufreq-set -c 1 -g ondemand
-docker cp cputest:delayTest.csv .
+docker cp cputest:delayTest.csv ./delayTest.csv
 cat delayTest.csv
+docker stop cputest

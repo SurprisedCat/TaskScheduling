@@ -7,7 +7,7 @@ then
     docker run -d -ti --name "cputest2core" --cpuset-cpus=3,4 alpine:latest
 fi
 docker cp computingtest cputest2core:/root/
-docker exec cputest2core touch delayTest2core.csv
+docker exec cputest2core touch delayTest.csv
 echo "sudo cpufreq-set -c 3,4 -g userspace"
 sudo cpufreq-set -c 3,4 -g userspace
 for CPUFREQ in 1200MHz 1300MHz 1400MHz 1500MHz 1600MHz 1700MHz 1800MHz 1900MHz 2000MHz 2100MHz
@@ -24,6 +24,6 @@ do
 done
 echo "sudo cpufreq-set -c 3,4 -g ondemand"
 sudo cpufreq-set -c 3,4 -g ondemand
-docker cp cputest2core:delayTest2core.csv .
+docker cp cputest2core:delayTest.csv ./delayTest2core.csv
 cat delayTest2core.csv
 docker stop cputest2core
