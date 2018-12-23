@@ -108,6 +108,6 @@ func ServerInfo(w http.ResponseWriter, r *http.Request) {
 
 func scheduling() {
 
-	assigning[clientInfo[0]] = []byte("127.0.0.1:8080")
+	assigning[clientInfo[0][]] = []byte("127.0.0.1:8080")
 	chanSch <- 1
 }
