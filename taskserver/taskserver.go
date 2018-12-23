@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -16,8 +17,25 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-func main() {
+var help bool
+var cpuHz string
+var cpus string
+var datarate string
 
+func init() {
+	flag.BoolVar(&help, "h", false, "Print help message")
+	flag.StringVar(&cpuHz, "ip", "127.0.0.1", "The IP address of the server")
+	flag.StringVar(&cpuHz, "port", "80", "The port of the server")
+	flag.StringVar(&cpuHz, "z", "0", "The frequency of CPU measured in MHz")
+	flag.StringVar(&cpus, "c", "0", "The cpu share of the container")
+	flag.StringVar(&cpus, "r", "0", "The maximum data rate ")
+}
+func main() {
+	flag.Parse()
+	if help {
+		flag.Usage()
+		return
+	}
 	//cpu number (normalized based on 1GHz) and bandwidth Kbps
 	serverInfo := map[string]int{"cpus": 1, "bw": 500}
 	infoJSON, _ := json.Marshal(serverInfo)

@@ -5,6 +5,7 @@ import (
 )
 
 var Debug = false
+var DataPath = "./"
 
 /*******************scheduler parameters*********************/
 //SchAddr Scheduling proxy Address 任务处理服务端地址
