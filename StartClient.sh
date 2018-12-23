@@ -1,6 +1,6 @@
 #! /bin/bash
 echo "Server 1"
-
+go run ./taskserver/taskserver.go
 echo "Server 2"
 
 echo "Server 3"

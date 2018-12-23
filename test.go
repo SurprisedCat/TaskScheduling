@@ -73,77 +73,93 @@ func main() {
 // 		fmt.Println(r1 + r2 + r3)
 // 	}
 // }
+// package main
+
+// import (
+// 	"encoding/csv"
+// 	"fmt"
+// 	"io"
+// 	"log"
+// 	"strings"
+// )
+
+// func main() {
+// 	in := `first_name,last_name,username
+// "Rob","Pike",rob
+// Ken,Thompson,ken
+// "Robert","Griesemer","gri"
+// `
+// 	r := csv.NewReader(strings.NewReader(in))
+
+// 	for {
+// 		record, err := r.Read()
+// 		if err == io.EOF {
+// 			break
+// 		}
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+
+// 		fmt.Println(record)
+// 	}
+
+// 	in = `first_name;last_name;username
+// "Rob";"Pike";rob
+// # lines beginning with a # character are ignored
+// Ken;Thompson;ken
+// "Robert";"Griesemer";"gri"
+// `
+// 	r = csv.NewReader(strings.NewReader(in))
+// 	r.Comma = ';'
+// 	r.Comment = '#'
+
+// 	records, err := r.ReadAll()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	fmt.Println(records)
+
+// 	records = [][]string{
+// 		{"first_name", "last_name", "username"},
+// 		{"Rob", "Pike", "rob"},
+// 		{"Ken", "Thompson", "ken"},
+// 		{"Robert", "Griesemer", "gri"},
+// 	}
+// 	var out strings.Builder
+// 	w := csv.NewWriter(&out)
+
+// 	for _, record := range records {
+// 		fmt.Println(record)
+// 		if err := w.Write(record); err != nil {
+// 			log.Fatalln("error writing record to csv:", err)
+// 		}
+// 		w.Flush()
+// 		fmt.Println(out.String())
+// 		out.Reset()
+// 	}
+
+// 	// Write any buffered data to the underlying writer (standard output).
+// 	w.Flush()
+
+// 	if err := w.Error(); err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	fmt.Println(out.String())
+// }
+
 package main
 
 import (
-	"encoding/csv"
 	"fmt"
-	"io"
-	"log"
-	"strings"
+	"math/rand"
+	"time"
 )
 
 func main() {
-	in := `first_name,last_name,username
-"Rob","Pike",rob
-Ken,Thompson,ken
-"Robert","Griesemer","gri"
-`
-	r := csv.NewReader(strings.NewReader(in))
+	for i := 0; i < 60; i++ {
+		rand.Seed(time.Now().UnixNano())
+		fmt.Printf("%d\n", rand.Intn(10000))
 
-	for {
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		fmt.Println(record)
 	}
-
-	in = `first_name;last_name;username
-"Rob";"Pike";rob
-# lines beginning with a # character are ignored
-Ken;Thompson;ken
-"Robert";"Griesemer";"gri"
-`
-	r = csv.NewReader(strings.NewReader(in))
-	r.Comma = ';'
-	r.Comment = '#'
-
-	records, err := r.ReadAll()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(records)
-
-	records = [][]string{
-		{"first_name", "last_name", "username"},
-		{"Rob", "Pike", "rob"},
-		{"Ken", "Thompson", "ken"},
-		{"Robert", "Griesemer", "gri"},
-	}
-	var out strings.Builder
-	w := csv.NewWriter(&out)
-
-	for _, record := range records {
-		fmt.Println(record)
-		if err := w.Write(record); err != nil {
-			log.Fatalln("error writing record to csv:", err)
-		}
-		w.Flush()
-		fmt.Println(out.String())
-		out.Reset()
-	}
-
-	// Write any buffered data to the underlying writer (standard output).
-	w.Flush()
-
-	if err := w.Error(); err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(out.String())
 }

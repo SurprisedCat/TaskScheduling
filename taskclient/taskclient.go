@@ -3,8 +3,10 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -16,27 +18,42 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
+var help bool
+var dim int
+var iter int
+var datasize int
+
+/********************task paramters*************************/
+
+func init() {
+	flag.BoolVar(&help, "h", false, "Print help message")
+	flag.IntVar(&dim, "d", 10, "The dimension of the matrix")
+	flag.IntVar(&iter, "i", 100, "The iteration number of process")
+	flag.IntVar(&datasize, "s", 1000, "data size in KB")
+}
+
 //client sends task request to scheduler by coap or http
 //client gets the assigned task server info
 //client sends the task info to task server and time the finish duration
 func main() {
+	flag.Parse()
+	if help {
+		flag.Usage()
+		return
+	}
 	var err error
 
 	var Debug = config.Debug
 
 	//task server parameters
 	serverAddr := []byte{}
-	serverHttpPort := config.ServerHttpPort
+	serverHTTPPort := config.ServerHTTPPort
 	serverPath := config.ServerPath
 
 	//task scheduler parameters
-	schHttpPort := config.SchHttpPort
+	schHTTPPort := config.SchHTTPPort
 	schAddr := config.SchAddr
 	schPath := config.SchPath
-
-	/********************task paramters*************************/
-	var iter = 100
-	var dim = 10
 
 	/***********************task genertaion***************************/
 	//Generate the task contents
@@ -59,11 +76,12 @@ func main() {
 	/***********************task genertaion***************************/
 
 	/***********************send task parameters to scheduler***********************/
-	schData := map[string][]byte{"datasize": utils.Uint32ToBytes(uint32(dim)), "taskiter": utils.Uint32ToBytes(uint32(iter))}
+	rand.Seed(time.Now().UnixNano())
+	schData := map[string]int{"id": rand.Intn(1000000), "tasksize": dim, "taskiter": iter, "datasize": datasize}
 	schDataJSON, _ := json.Marshal(schData)
 	reqSch := bytes.NewBuffer(schDataJSON)
 	var respSch *http.Response
-	respSch, err = http.Post("http://"+string(schAddr)+":"+string(schHttpPort)+schPath, "application/json;charset=utf-8", reqSch)
+	respSch, err = http.Post("http://"+string(schAddr)+":"+string(schHTTPPort)+schPath, "application/json;charset=utf-8", reqSch)
 	if err != nil {
 		utils.CheckErr(err, "Scheduler HTTP POST error")
 	}
@@ -87,7 +105,7 @@ func main() {
 	start := time.Now()
 	req := bytes.NewBuffer(taskDataJSON)
 	var resp *http.Response
-	resp, err = http.Post("http://"+string(serverAddr)+":"+string(serverHttpPort)+serverPath, "application/json;charset=utf-8", req)
+	resp, err = http.Post("http://"+string(serverAddr)+":"+string(serverHTTPPort)+serverPath, "application/json;charset=utf-8", req)
 	if err != nil {
 		utils.CheckErr(err, "HTTP POST error")
 	}

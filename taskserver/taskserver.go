@@ -18,17 +18,19 @@ import (
 )
 
 var help bool
+var serverip string
+var serverport string
 var cpuHz string
 var cpus string
 var datarate string
 
 func init() {
 	flag.BoolVar(&help, "h", false, "Print help message")
-	flag.StringVar(&cpuHz, "ip", "127.0.0.1", "The IP address of the server")
-	flag.StringVar(&cpuHz, "port", "80", "The port of the server")
+	flag.StringVar(&serverip, "ip", "127.0.0.1", "The IP address of the server")
+	flag.StringVar(&serverport, "port", "80", "The port of the server")
 	flag.StringVar(&cpuHz, "z", "0", "The frequency of CPU measured in MHz")
 	flag.StringVar(&cpus, "c", "0", "The cpu share of the container")
-	flag.StringVar(&cpus, "r", "0", "The maximum data rate ")
+	flag.StringVar(&datarate, "r", "0", "The maximum data rate ")
 }
 func main() {
 	flag.Parse()
@@ -37,7 +39,7 @@ func main() {
 		return
 	}
 	//cpu number (normalized based on 1GHz) and bandwidth Kbps
-	serverInfo := map[string]int{"cpus": 1, "bw": 500}
+	serverInfo := []string{serverip + ":" + serverport, cpuHz, cpus, datarate}
 	infoJSON, _ := json.Marshal(serverInfo)
 	//Role as a server
 	//Report info abot itself to scheduler
@@ -100,13 +102,13 @@ func MatrixComputing(w http.ResponseWriter, r *http.Request) {
 func ReportInfo(infoJSON []byte) {
 	for {
 		//task scheduler parameters
-		schHttpPort := config.SchHttpPort
+		schHTTPPort := config.SchHTTPPort
 		schAddr := config.SchAddr
 		schPath := config.SchPathServerReport
 
 		reqSch := bytes.NewBuffer(infoJSON)
 		var respSch *http.Response
-		respSch, err := http.Post("http://"+string(schAddr)+":"+string(schHttpPort)+schPath, "application/json;charset=utf-8", reqSch)
+		respSch, err := http.Post("http://"+string(schAddr)+":"+string(schHTTPPort)+schPath, "application/json;charset=utf-8", reqSch)
 		if err != nil {
 			utils.CheckErr(err, "Scheduler HTTP POST error")
 		}
@@ -122,6 +124,6 @@ func ReportInfo(infoJSON []byte) {
 		} else {
 			log.Println("Report OK")
 		}
-		time.Sleep(time.Duration(time.Second * 2))
+		time.Sleep(time.Duration(time.Second * 5))
 	}
 }

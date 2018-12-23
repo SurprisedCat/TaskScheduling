@@ -29,6 +29,37 @@ func OpenDB() (db *badger.DB, err error) {
 	return db, err
 }
 
+//GetAll get all the keys and values in the database
+func GetAll() (keyValue []map[string]string) {
+	//open DB
+	db, err := OpenDB()
+	if err != nil {
+		return nil //func Get
+	}
+	defer db.Close()
+
+	//Iterating over keys
+	err = db.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.PrefetchSize = 10
+		it := txn.NewIterator(opts)
+		defer it.Close()
+		for it.Rewind(); it.Valid(); it.Next() {
+			item := it.Item()
+			k := item.Key()
+			err := item.Value(func(v []byte) error {
+				keyValue = append(keyValue, map[string]string{string(k): string(v)})
+				return nil
+			})
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return keyValue
+}
+
 //Get get a value according to key from database
 func Get(key []byte) (value []byte) {
 	//open DB
@@ -56,6 +87,7 @@ func Get(key []byte) (value []byte) {
 	return value
 }
 
+//Set key = value
 func Set(key, value []byte) error {
 	//open DB
 	db, err := OpenDB()
@@ -93,6 +125,7 @@ func Delete(key []byte) error {
 	return nil
 }
 
+//GbCollect garbage collect
 func GbCollect() {
 	db, _ := OpenDB()
 	db.RunValueLogGC(0.7)
